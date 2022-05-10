@@ -1,6 +1,13 @@
 package com.example.webservicelabb3.smhi;
 
+import com.example.webservicelabb3.met.Timeseries;
 import org.springframework.web.client.RestTemplate;
+
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
+import java.util.List;
 
 public class SmhiRest {
 
@@ -12,14 +19,34 @@ public class SmhiRest {
     }
 
     public double getTemperature() {
-        return getForecast().getTimeSeries().get(23).getParameters().get(1).getValues().get(0);
+        return getForecast().getTimeSeries().get(getTimeIndex()).getParameters().get(1).getValues().get(0);
     }
 
     public double getWindSpeed() {
-        return getForecast().getTimeSeries().get(23).getParameters().get(4).getValues().get(0);
+        return getForecast().getTimeSeries().get(getTimeIndex()).getParameters().get(4).getValues().get(0);
     }
 
     public String getTime() {
-        return getForecast().getTimeSeries().get(23).getValidTime();
+        return getForecast().getTimeSeries().get(getTimeIndex()).getValidTime();
+    }
+
+
+    public String getCurrentTime() {
+        LocalDateTime ldtn = LocalDateTime.now(ZoneOffset.UTC).plusHours(24);
+        DateTimeFormatter fmtr = DateTimeFormatter.ISO_DATE_TIME;
+        return ldtn.truncatedTo(ChronoUnit.HOURS).format(fmtr) + "Z";
+    }
+
+    public int getTimeIndex() {
+        String currentTime = getCurrentTime();
+        List<TimeSeries> timeSeries = getForecast().getTimeSeries();
+        int index = 0;
+
+        for (int i = 0; i < timeSeries.size(); i++) {
+            if (timeSeries.get(i).getValidTime().equals(currentTime)) {
+                index = i;
+            }
+        }
+        return index;
     }
 }

@@ -1,6 +1,5 @@
 package com.example.webservicelabb3.model;
 
-import java.util.Objects;
 
 public class Forecast implements Comparable<Forecast>{
 
@@ -12,18 +11,6 @@ public class Forecast implements Comparable<Forecast>{
 
     private String time;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Forecast forecast = (Forecast) o;
-        return Double.compare(forecast.temperature, temperature) == 0 && Double.compare(forecast.windSpeed, windSpeed) == 0;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(temperature, windSpeed);
-    }
 
     public Forecast() {
     }

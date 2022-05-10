@@ -5,6 +5,12 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
+import java.util.List;
+
 public class MetRest {
 
     RestTemplate restTemplate= new RestTemplateBuilder()
@@ -18,16 +24,33 @@ public class MetRest {
     }
 
     public double getTemperature() {
-        return getForecast().getProperties().getTimeseries().get(25).getData().getInstant().getDetails().getAirTemperature();
+        return getForecast().getProperties().getTimeseries().get(getTimeIndex()).getData().getInstant().getDetails().getAirTemperature();
     }
 
     public double getWindSpeed() {
-        return getForecast().getProperties().getTimeseries().get(25).getData().getInstant().getDetails().getWindSpeed();
+        return getForecast().getProperties().getTimeseries().get(getTimeIndex()).getData().getInstant().getDetails().getWindSpeed();
     }
 
     public String getTime() {
-        return getForecast().getProperties().getTimeseries().get(25).getTime();
+        return getForecast().getProperties().getTimeseries().get(getTimeIndex()).getTime();
     }
 
+    public String getCurrentTime() {
+        LocalDateTime ldtn = LocalDateTime.now(ZoneOffset.UTC).plusHours(24);
+        DateTimeFormatter fmtr = DateTimeFormatter.ISO_DATE_TIME;
+        return ldtn.truncatedTo(ChronoUnit.HOURS).format(fmtr) + "Z";
+    }
 
+    public int getTimeIndex() {
+        String currentTime = getCurrentTime();
+        List<Timeseries> timeSeries = getForecast().getProperties().getTimeseries();
+        int index = 0;
+
+        for (int i = 0; i < timeSeries.size(); i++) {
+            if (timeSeries.get(i).getTime().equals(currentTime)) {
+                index = i;
+            }
+        }
+        return index;
+    }
 }
