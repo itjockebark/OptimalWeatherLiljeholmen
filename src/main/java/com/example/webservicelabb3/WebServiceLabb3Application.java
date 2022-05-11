@@ -1,6 +1,7 @@
 package com.example.webservicelabb3;
 
 
+import com.example.webservicelabb3.smhi.SmhiDAO;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 

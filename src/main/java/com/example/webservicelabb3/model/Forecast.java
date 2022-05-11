@@ -1,6 +1,5 @@
 package com.example.webservicelabb3.model;
 
-
 public class Forecast implements Comparable<Forecast>{
 
     private String origin;
@@ -10,7 +9,6 @@ public class Forecast implements Comparable<Forecast>{
     private double windSpeed;
 
     private String time;
-
 
     public Forecast() {
     }

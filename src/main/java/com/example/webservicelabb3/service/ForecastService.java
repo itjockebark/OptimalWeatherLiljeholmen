@@ -1,34 +1,27 @@
 package com.example.webservicelabb3.service;
 
-
-import com.example.webservicelabb3.met.MetRest;
-import com.example.webservicelabb3.meteo.MeteoRest;
-import com.example.webservicelabb3.smhi.SmhiRest;
+import com.example.webservicelabb3.met.MetDAO;
+import com.example.webservicelabb3.meteo.MeteoDAO;
+import com.example.webservicelabb3.smhi.SmhiDAO;
 import com.example.webservicelabb3.model.Forecast;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 @Service
 public class ForecastService {
 
-    SmhiRest smhiRest = new SmhiRest();
+    SmhiDAO smhiDAO = new SmhiDAO();
 
-    MetRest metRest = new MetRest();
+    MetDAO metDAO = new MetDAO();
 
-    MeteoRest meteoRest = new MeteoRest();
+    MeteoDAO meteoDAO = new MeteoDAO();
 
-    Forecast smhiForecast = new Forecast("SMHI", smhiRest.getTemperature(), smhiRest.getWindSpeed(), smhiRest.getTime());
-    Forecast metForecast = new Forecast("MET", metRest.getTemperature(), metRest.getWindSpeed(), metRest.getTime());
-    Forecast meteoForecast = new Forecast("Meteo", meteoRest.getTemperature(), meteoRest.getWindSpeed(), meteoRest.getTime());
+    Forecast smhiForecast = smhiDAO.getForecast();
+    Forecast metForecast = metDAO.getForecast();
+    Forecast meteoForecast = meteoDAO.getForecast();
 
     List<Forecast> forecasts = new ArrayList<>(Arrays.asList(smhiForecast,metForecast,meteoForecast));
-
 
     public void sortForecasts() {
         forecasts.sort(Collections.reverseOrder());

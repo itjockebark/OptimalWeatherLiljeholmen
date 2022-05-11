@@ -96,4 +96,15 @@ public class Parameter {
         this.additionalProperties.put(name, value);
     }
 
+    @Override
+    public String toString() {
+        return "Parameter{" +
+                "name='" + name + '\'' +
+                ", levelType='" + levelType + '\'' +
+                ", level=" + level +
+                ", unit='" + unit + '\'' +
+                ", values=" + values +
+                ", additionalProperties=" + additionalProperties +
+                '}';
+    }
 }

@@ -1,8 +1,12 @@
 package com.example.webservicelabb3.met;
 
+import com.example.webservicelabb3.model.Forecast;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
@@ -11,31 +15,32 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
-public class MetRest {
+public class MetDAO {
 
     RestTemplate restTemplate= new RestTemplateBuilder()
             .defaultHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
             .defaultHeader(HttpHeaders.USER_AGENT, "notJava!")
             .build();
 
-    public Met getForecast() {
-        Met met = restTemplate.getForObject("https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=59.3110&lon=18.0300", Met.class);
-        return met;
-    }
+    Met met = restTemplate.getForObject("https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=59.3110&lon=18.0300", Met.class);
 
     public double getTemperature() {
-        return getForecast().getProperties().getTimeseries().get(getTimeIndex()).getData().getInstant().getDetails().getAirTemperature();
+        return met.getProperties().getTimeseries().get(getTimeIndex()).getData().getInstant().getDetails().getAirTemperature();
     }
 
     public double getWindSpeed() {
-        return getForecast().getProperties().getTimeseries().get(getTimeIndex()).getData().getInstant().getDetails().getWindSpeed();
+        return met.getProperties().getTimeseries().get(getTimeIndex()).getData().getInstant().getDetails().getWindSpeed();
     }
 
     public String getTime() {
-        return getForecast().getProperties().getTimeseries().get(getTimeIndex()).getTime();
+        return met.getProperties().getTimeseries().get(getTimeIndex()).getTime();
     }
 
-    public String getCurrentTime() {
+    public Forecast getForecast() {
+        return new Forecast("MET", getTemperature(), getWindSpeed(), getTime());
+    }
+
+   public String getCurrentTime() {
         LocalDateTime ldtn = LocalDateTime.now(ZoneOffset.UTC).plusHours(24);
         DateTimeFormatter fmtr = DateTimeFormatter.ISO_DATE_TIME;
         return ldtn.truncatedTo(ChronoUnit.HOURS).format(fmtr) + "Z";
@@ -43,7 +48,7 @@ public class MetRest {
 
     public int getTimeIndex() {
         String currentTime = getCurrentTime();
-        List<Timeseries> timeSeries = getForecast().getProperties().getTimeseries();
+        List<Timeseries> timeSeries = met.getProperties().getTimeseries();
         int index = 0;
 
         for (int i = 0; i < timeSeries.size(); i++) {
